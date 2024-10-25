@@ -9,3 +9,6 @@ Program ini digunakan untuk merubah otomatis proxy dan port yang ada pada "/etc/
 
 sudo apt install python3-tk
 
+# Cara Menjalankan
+
+sudo python3 proxy-changer.py

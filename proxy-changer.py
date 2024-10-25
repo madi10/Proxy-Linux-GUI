@@ -6,12 +6,17 @@ class ProxyChangerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Proxy Changer")
-        self.root.geometry("400x200")
+        self.root.geometry("400x250")
 
         # Label dan input proxy
-        tk.Label(root, text="Masukkan Proxy (format: proxy:port):").pack(pady=10)
+        tk.Label(root, text="Masukkan Proxy (format: proxy):").pack(pady=10)
         self.proxy_input = tk.Entry(root, width=40)
         self.proxy_input.pack()
+
+        # Label dan input port
+        tk.Label(root, text="Masukkan Port:").pack(pady=10)
+        self.port_input = tk.Entry(root, width=10)
+        self.port_input.pack()
 
         # Tombol Simpan Proxy
         save_button = tk.Button(root, text="Simpan Proxy", command=self.save_proxy)
@@ -23,17 +28,20 @@ class ProxyChangerApp:
 
     def save_proxy(self):
         proxy = self.proxy_input.get().strip()
-        if proxy:
+        port = self.port_input.get().strip()
+
+        if proxy and port.isdigit():
             try:
                 # Tulis pengaturan proxy ke file
                 with open("/etc/apt/apt.conf.d/proxy.conf", "w") as file:
-                    file.write(f'Acquire::http::Proxy "http://{proxy}";\n')
-                    file.write(f'Acquire::https::Proxy "https://{proxy}";\n')
+                    file.write(f'Acquire::http::Proxy "http://{proxy}:{port}";\n')
+                    file.write(f'Acquire::https::Proxy "https://{proxy}:{port}";\n')
+                    file.write(f'Acquire::ftp::Proxy "ftp://{proxy}:{port}";\n')
                 messagebox.showinfo("Berhasil", "Proxy berhasil disimpan!")
             except PermissionError:
                 messagebox.showerror("Error", "Jalankan aplikasi dengan hak akses root.")
         else:
-            messagebox.showwarning("Peringatan", "Proxy tidak boleh kosong.")
+            messagebox.showwarning("Peringatan", "Proxy dan port tidak boleh kosong dan port harus berupa angka.")
 
     def clear_proxy(self):
         try:
